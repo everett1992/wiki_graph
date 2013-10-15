@@ -1,0 +1,21 @@
+#!/bin/bash
+
+dir=$(dirname $(readlink -f $0))
+assets=$dir/assets
+tmp=$dir/../tmp
+
+wiki=simplewiki
+
+page=page
+pagelinks=pagelinks
+
+for file in $page $pagelinks; do
+  echo ":: Downloading $wiki $file dumps"
+  url=http://dumps.wikimedia.org/$wiki/latest/${wiki}-latest-${file}.sql.gz
+  curl -# $url               \
+    | gunzip -c              \
+    | sed -e 's/),(/),\n(/g' \
+    > $tmp/${wiki}-${file}.sql
+
+    mv $tmp/${wiki}-${file}.sql $assets/${wiki}-${file}.sql # move it to the lib/assets dir
+done
