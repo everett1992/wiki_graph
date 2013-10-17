@@ -4,12 +4,13 @@ dir=$(dirname $(readlink -f $0))
 assets=$dir/assets
 tmp=$dir/../tmp
 
-wiki=simplewiki
+wiki=${1:-simplewiki}
 
-page=page
-pagelinks=pagelinks
+dumps='page pagelinks'
 
-for file in $page $pagelinks; do
+echo $wiki
+
+for file in $dumps; do
   echo ":: Downloading $wiki $file dumps"
   url=http://dumps.wikimedia.org/$wiki/latest/${wiki}-latest-${file}.sql.gz
   curl -# $url               \

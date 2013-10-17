@@ -1,0 +1,9 @@
+%h2= @page.title
+
+- attrs = [:page_id]
+- attrs.each do |attr|
+  %p
+    #{attr}:
+    %strong #{@page[attr]}
+
+= render partial: 'list', locals: {pages: @page.links}
