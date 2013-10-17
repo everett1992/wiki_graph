@@ -5,7 +5,22 @@ desc "Download wiki dumps and parse them"
 task :wiki, [:wiki] => 'wiki:all'
 
 namespace :wiki do
-  task :all, [:wiki] => [:get, :parse]
+  task :all, [:wiki] => [:get, :parse] do |t, args|
+    # Print info about the newly created pages and links.
+    link_count = 0
+    Pages.all.each do |page|
+      link_count += page.links.count
+    end
+    indent "Done parsing #{args[:wiki]}"
+    indent "#{Pages.count} pages"
+    indent "#{link_count} links"
+
+    indent "The pages with the most links are:"
+    Pages.all.sort_by { |a| a.links.count }.reverse[0...5].each do |page|
+      puts "#{page.page_id} - #{page.title}: #{page.links.count}"
+    end
+  end
+
 
   desc "Download wiki page and page links database dumps to /lib/assets"
   task :get, :wiki do |t, args|
@@ -38,22 +53,10 @@ namespace :wiki do
         if to.nil? || from.nil?
           errors = errors.succ
         else
-          puts "#{from.title} to #{to.title}"
           from.links << to
-          to.links << from
           from.save
-          to.save
         end
       end
-
-
-      link_count = 0
-      Pages.all.each do |page|
-        link_count += page.links.count
-        puts "#{page.page_id} - #{page.title}: #{page.links.count}"
-        page.save
-      end
-      indent "Created #{link_count} with #{errors} errors"
     end
   end
 end
