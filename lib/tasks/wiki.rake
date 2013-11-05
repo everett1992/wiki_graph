@@ -17,7 +17,7 @@ namespace :wiki do
 
     indent "The pages with the most links are:"
     Pages.all.sort_by { |a| a.links.count }.reverse[0...5].each do |page|
-      puts "#{page.page_id} - #{page.title}: #{page.links.count}"
+      puts "#{page.page_id} - #{page.title}: links #{page.links.count}, persited #{page.links.persisted?}, saved #{page.save}"
     end
   end
 
@@ -53,8 +53,10 @@ namespace :wiki do
         if to.nil? || from.nil?
           errors = errors.succ
         else
+          puts from.class, to.class
           from.links << to
           from.save
+          p from.errors.to_a if from.errors.any?
         end
       end
     end

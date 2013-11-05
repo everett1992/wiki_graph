@@ -5,8 +5,9 @@ assets=$dir/assets
 tmp=$dir/../tmp
 
 wiki=${1:-simplewiki}
+shift
 
-dumps='page pagelinks'
+dumps=${*:-'page pagelinks'}
 
 echo $wiki
 
